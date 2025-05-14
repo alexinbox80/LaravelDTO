@@ -17,11 +17,11 @@ class BlogPostResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'description' => $this->description,
+            'description' => !is_null($this->description) ? $this->description : null,
             'source' => $this->source,
             'is-published' => $this->isPublished,
-            'created-at' => $this->created_at,
-            'updated-at' => $this->updated_at,
+            'created-at' => $this->created_at,//->diffForHumans(),
+            'updated-at' => $this->updated_at,//->diffForHumans(),
         ];
     }
 }

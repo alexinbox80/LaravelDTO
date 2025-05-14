@@ -7,6 +7,18 @@ use App\Models\BlogPost;
 
 class BlogPostService
 {
+    /**
+     * @return array
+     */
+    public function index(): array
+    {
+        $blogPosts = BlogPost::query();
+
+        return [
+            'data' => $blogPosts->latest('created_at')->paginate(config('pagination.index.blogPosts'))
+        ];
+    }
+
     public function store(BlogPostDto $blogPostDto): BlogPost
     {
         return BlogPost::create([

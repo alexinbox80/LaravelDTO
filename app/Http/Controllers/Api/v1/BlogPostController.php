@@ -8,33 +8,43 @@ use App\Http\Requests\Api\BlogPostRequest;
 use App\Http\Resources\Api\BlogPostResource;
 use App\Models\BlogPost;
 use App\Services\Blog\BlogPostService;
+use App\Services\Response\ResponseService;
+use Illuminate\Http\JsonResponse;
 
 class BlogPostController extends Controller
 {
 
     public function __construct(
-      protected BlogPostService $blogPostService
+      protected BlogPostService $blogPostService,
+      protected ResponseService $responseService,
     ) {
 
     }
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $blogPosts = $this->blogPostService->index();
+
+        return $this->responseService->success([
+            BlogPostResource::collection($blogPosts['data'])
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(BlogPostRequest $request): BlogPostResource
+    public function store(BlogPostRequest $request): JsonResponse
     {
         $post = $this->blogPostService->store(
             BlogPostDto::fromRequest($request),
         );
 
-        return BlogPostResource::make($post);
+        return $this->responseService->success([
+            BlogPostResource::make($post)
+        ]);
     }
 
     /**
@@ -48,14 +58,16 @@ class BlogPostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(BlogPost $blogPost, BlogPostRequest $request): BlogPostResource
+    public function update(BlogPost $blogPost, BlogPostRequest $request): JsonResponse
     {
         $post = $this->blogPostService->update(
             $blogPost,
             BlogPostDto::fromRequest($request),
         );
 
-        return BlogPostResource::make($post);
+        return $this->responseService->success([
+            BlogPostResource::make($post)
+        ]);
     }
 
     /**
