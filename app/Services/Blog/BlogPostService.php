@@ -29,6 +29,11 @@ class BlogPostService
         ]);
     }
 
+    public function show(BlogPost $blogPost): BlogPost
+    {
+        return $blogPost;
+    }
+
     public function update(BlogPost $blogPost, BlogPostDto $blogPostDto): BlogPost
     {
         return tap($blogPost)->update([
@@ -37,5 +42,10 @@ class BlogPostService
             'source' => $blogPostDto->blogPostSource,
             'isPublished' => $blogPostDto->isPublished,
         ]);
+    }
+
+    public function destroy(BlogPost $blogPost): bool
+    {
+            return $blogPost->delete();
     }
 }

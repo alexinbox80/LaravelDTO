@@ -8,7 +8,7 @@ use App\Http\Requests\Api\BlogPostRequest;
 use App\Http\Resources\Api\BlogPostResource;
 use App\Models\BlogPost;
 use App\Services\Blog\BlogPostService;
-use App\Services\Response\ResponseService;
+use App\Services\Contracts\ResponseContract;
 use Illuminate\Http\JsonResponse;
 
 class BlogPostController extends Controller
@@ -16,7 +16,7 @@ class BlogPostController extends Controller
 
     public function __construct(
       protected BlogPostService $blogPostService,
-      protected ResponseService $responseService,
+      protected ResponseContract $responseService,
     ) {
 
     }
@@ -50,9 +50,13 @@ class BlogPostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(BlogPost $blogPost): JsonResponse
     {
-        //
+        $post = $this->blogPostService->show($blogPost);
+
+        return $this->responseService->success([
+            BlogPostResource::make($post)
+        ]);
     }
 
     /**
@@ -73,8 +77,20 @@ class BlogPostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(BlogPost $blogPost): JsonResponse
     {
-        //
+        $post = $this->blogPostService->destroy(
+            $blogPost,
+        );
+
+        if ($post) {
+            return $this->responseService->success([
+                'message' => __('messages.blog.destroy.success')
+            ]);
+        } else {
+            return $this->responseService->unSuccess([
+                'message' => __('messages.blog.destroy.failed')
+            ]);
+        }
     }
 }
