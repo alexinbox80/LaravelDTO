@@ -39,7 +39,7 @@ class BlogPostController extends Controller
     public function store(BlogPostRequest $request): JsonResponse
     {
         $post = $this->blogPostService->store(
-            BlogPostDto::fromRequest($request),
+            BlogPostDto::fromRequest($request)
         );
 
         return $this->responseService->success([
@@ -66,7 +66,7 @@ class BlogPostController extends Controller
     {
         $post = $this->blogPostService->update(
             $blogPost,
-            BlogPostDto::fromRequest($request),
+            BlogPostDto::fromRequest($request)
         );
 
         return $this->responseService->success([
@@ -80,7 +80,7 @@ class BlogPostController extends Controller
     public function destroy(BlogPost $blogPost): JsonResponse
     {
         $post = $this->blogPostService->destroy(
-            $blogPost,
+            $blogPost
         );
 
         if ($post) {

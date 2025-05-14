@@ -25,7 +25,7 @@ class BlogPostService
             'title' => $blogPostDto->title,
             'description' => $blogPostDto->description,
             'source' => $blogPostDto->blogPostSource,
-            'isPublished' => $blogPostDto->isPublished,
+            'isPublished' => $blogPostDto->isPublished
         ]);
     }
 
@@ -40,7 +40,7 @@ class BlogPostService
             'title' => $blogPostDto->title,
             'description' => $blogPostDto->description,
             'source' => $blogPostDto->blogPostSource,
-            'isPublished' => $blogPostDto->isPublished,
+            'isPublished' => $blogPostDto->isPublished
         ]);
     }
 
