@@ -24,10 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => false,
-                    'code'  => Response::HTTP_NOT_FOUND,
+                    'code' => Response::HTTP_NOT_FOUND,
                     'error' => 'Entity not found.',
                     'data' => []
-                ], Response::HTTP_NOT_FOUND);
+                ], Response::HTTP_BAD_REQUEST);
             }
         });
     })->create();

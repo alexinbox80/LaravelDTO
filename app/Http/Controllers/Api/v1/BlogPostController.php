@@ -15,10 +15,9 @@ class BlogPostController extends Controller
 {
 
     public function __construct(
-      protected BlogPostService $blogPostService,
-      protected ResponseContract $responseService,
+      private readonly BlogPostService $blogPostService,
+      private readonly ResponseContract $responseService,
     ) {
-
     }
 
     /**
@@ -42,7 +41,7 @@ class BlogPostController extends Controller
             BlogPostDto::fromRequest($request)
         );
 
-        return $this->responseService->success([
+        return $this->responseService->created([
             BlogPostResource::make($post)
         ]);
     }
