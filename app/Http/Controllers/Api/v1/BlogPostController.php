@@ -6,26 +6,27 @@ use App\DTO\BlogPostDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\BlogPostRequest;
 use App\Http\Resources\Api\BlogPostResource;
-use App\Models\BlogPost;
 use App\Services\Blog\BlogPostService;
 use App\Services\Contracts\ResponseContract;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class BlogPostController extends Controller
 {
 
     public function __construct(
-      private readonly BlogPostService $blogPostService,
-      private readonly ResponseContract $responseService,
-    ) {
+        private readonly BlogPostService  $blogPostService,
+        private readonly ResponseContract $responseService,
+    )
+    {
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $blogPosts = $this->blogPostService->index();
+        $blogPosts = $this->blogPostService->index($request);
 
         return $this->responseService->success([
             BlogPostResource::collection($blogPosts['data'])
@@ -49,9 +50,9 @@ class BlogPostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(BlogPost $blogPost): JsonResponse
+    public function show(string $blogPostId): JsonResponse
     {
-        $post = $this->blogPostService->show($blogPost);
+        $post = $this->blogPostService->show($blogPostId);
 
         return $this->responseService->success([
             BlogPostResource::make($post)
@@ -61,10 +62,10 @@ class BlogPostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(BlogPost $blogPost, BlogPostRequest $request): JsonResponse
+    public function update(string $blogPostId, BlogPostRequest $request): JsonResponse
     {
         $post = $this->blogPostService->update(
-            $blogPost,
+            $blogPostId,
             BlogPostDto::fromRequest($request)
         );
 
@@ -76,13 +77,13 @@ class BlogPostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(BlogPost $blogPost): JsonResponse
+    public function destroy(string $blogPostId): JsonResponse
     {
-        $post = $this->blogPostService->destroy(
-            $blogPost
+        $destroyId = $this->blogPostService->destroy(
+            $blogPostId
         );
 
-        if ($post) {
+        if ($destroyId) {
             return $this->responseService->success([
                 'message' => __('messages.blog.destroy.success')
             ]);

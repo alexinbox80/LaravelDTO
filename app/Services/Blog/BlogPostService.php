@@ -4,48 +4,64 @@ namespace App\Services\Blog;
 
 use App\DTO\BlogPostDto;
 use App\Models\BlogPost;
+use App\Repository\Eloquent\BlogPostRepository;
+use Illuminate\Http\Request;
 
 class BlogPostService
 {
+    public function __construct(
+        private readonly BlogPostRepository $blogPostRepository
+    )
+    {
+    }
+
     /**
+     * @param Request $request
      * @return array
      */
-    public function index(): array
+    public function index(Request $request): array
     {
-        $blogPosts = BlogPost::query();
+        if (is_null($request->query('page')))
+            $blogPosts = $this->blogPostRepository->getAll();
+        else
+            $blogPosts = $this->blogPostRepository->getPaginated(config('pagination.index.blogPosts'));
 
-        return [
-            'data' => $blogPosts->latest('created_at')->paginate(config('pagination.index.blogPosts'))
-        ];
+        return $blogPosts;
     }
 
     public function store(BlogPostDto $blogPostDto): BlogPost
     {
-        return BlogPost::create([
+        $blogPost = $this->blogPostRepository->create([
             'title' => $blogPostDto->title,
             'description' => $blogPostDto->description,
             'source' => $blogPostDto->blogPostSource,
             'isPublished' => $blogPostDto->isPublished
         ]);
-    }
 
-    public function show(BlogPost $blogPost): BlogPost
-    {
         return $blogPost;
     }
 
-    public function update(BlogPost $blogPost, BlogPostDto $blogPostDto): BlogPost
+    public function show(string $blogPostId): BlogPost
     {
-        return tap($blogPost)->update([
-            'title' => $blogPostDto->title,
-            'description' => $blogPostDto->description,
-            'source' => $blogPostDto->blogPostSource,
-            'isPublished' => $blogPostDto->isPublished
-        ]);
+        return $this->blogPostRepository->getById((int)$blogPostId);
     }
 
-    public function destroy(BlogPost $blogPost): bool
+    public function update(string $blogPostId, BlogPostDto $blogPostDto): BlogPost
     {
-            return $blogPost->delete();
+        $blogPost = $this->blogPostRepository->update(
+            (int) $blogPostId,
+            [
+                'title' => $blogPostDto->title,
+                'description' => $blogPostDto->description,
+                'source' => $blogPostDto->blogPostSource,
+                'isPublished' => $blogPostDto->isPublished
+            ]);
+
+        return $blogPost;
+    }
+
+    public function destroy(string $blogPostId): int
+    {
+        return $this->blogPostRepository->destroy((int) $blogPostId);
     }
 }
