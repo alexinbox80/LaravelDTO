@@ -16,14 +16,14 @@ class BlogPostRepository extends BaseRepository
     public function getPaginated(int $perPage): array
     {
         return [
-            'data' => BlogPost::query()->latest('created_at')->paginate($perPage)
+            'data' => BlogPost::query()->where('isPublished', true)->latest('created_at')->paginate($perPage)
         ];
     }
 
     public function getAll(): array
     {
         return [
-            'data' => BlogPost::all()->sortByDesc('created_at')
+            'data' => BlogPost::query()->where('isPublished', true)->latest('created_at')->get()
         ];
     }
 
