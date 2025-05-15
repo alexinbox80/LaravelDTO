@@ -19,9 +19,9 @@ class BlogPostModelResource extends JsonResource
             'title' => $this->getTitle(),
             'description' => !is_null($this->getDescription()) ? $this->getDescription() : null,
             'source' => $this->getSource(),
-            'is-published' => $this->isPublished(),
-            'created-at' => $this->getCreatedAt(),
-            'updated-at' => $this->getUpdatedAt(),
+            'is_published' => $this->isPublished(),
+            'created_at' => $this->getCreatedAt(),
+            'updated_at' => $this->getUpdatedAt(),
         ];
     }
 }

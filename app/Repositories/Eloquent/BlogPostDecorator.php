@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\BlogPost;
 use App\Models\BlogPostModel;
 use App\Repositories\Eloquent\Contracts\BlogPostContract;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class BlogPostDecorator implements BlogPostContract
 {
@@ -15,14 +15,36 @@ class BlogPostDecorator implements BlogPostContract
     {
     }
 
-    public function getPaginated(int $perPage): array
+    /**
+     * @param int $perPage
+     * @return LengthAwarePaginator
+     */
+    public function getPaginated(int $perPage): LengthAwarePaginator
     {
         return $this->blogPostRepository->getPaginated($perPage);
     }
 
+    /**
+     * @return BlogPostModel[]
+     */
     public function getAll(): array
     {
-        return $this->blogPostRepository->getAll();
+        $blogPosts = $this->blogPostRepository->getAll();
+
+        $result = [];
+        foreach ($blogPosts as $blogPost) {
+            $result[] = new BlogPostModel(
+                $blogPost->id,
+                $blogPost->title,
+                $blogPost->description,
+                $blogPost->source,
+                $blogPost->isPublished,
+                $blogPost->created_at,
+                $blogPost->updated_at
+            );
+        }
+
+        return $result;
     }
 
     public function find(int $blogPostId): ?BlogPostModel
@@ -37,7 +59,7 @@ class BlogPostDecorator implements BlogPostContract
                 $blogPost->source,
                 $blogPost->isPublished,
                 $blogPost->created_at,
-                $blogPost->updated_at,
+                $blogPost->updated_at
             );
         else
             return null;

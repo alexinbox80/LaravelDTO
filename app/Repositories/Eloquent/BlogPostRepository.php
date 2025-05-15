@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\BlogPost;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BlogPostRepository extends BaseRepository
@@ -13,18 +14,14 @@ class BlogPostRepository extends BaseRepository
         return BlogPost::class;
     }
 
-    public function getPaginated(int $perPage): array
+    public function getPaginated(int $perPage): LengthAwarePaginator
     {
-        return [
-            'data' => BlogPost::query()->where('isPublished', true)->latest('created_at')->paginate($perPage)
-        ];
+        return $this->findBy(['isPublished' => true], [], true , $perPage);
     }
 
-    public function getAll(): array
+    public function getAll(): Collection
     {
-        return [
-            'data' => BlogPost::query()->where('isPublished', true)->latest('created_at')->get()
-        ];
+        return $this->findBy(['isPublished' => true], [], false , 0);
     }
 
     public function find(int $id): ?BlogPost

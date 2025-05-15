@@ -50,9 +50,9 @@ abstract class BaseRepository implements EloquentRepositoryContract
      */
     public function query(): Builder
     {
-        if ($this->query instanceof Builder) {
-            return $this->query;
-        }
+//        if ($this->query instanceof Builder) {
+//            return $this->query;
+//        }
 
         return $this->model->newQuery();
     }
@@ -101,7 +101,7 @@ abstract class BaseRepository implements EloquentRepositoryContract
     /**
      * Find a model by its primary key.
      *
-     * @param int $id Id of the searched entity
+     * @param int $id id of the searched entity
      * @return Model|null
      */
     public function find(int $id): ?Model
@@ -143,7 +143,8 @@ abstract class BaseRepository implements EloquentRepositoryContract
         $query = $this
             ->query()
             ->with($relations)
-            ->where($conditions);
+            ->where($conditions)
+            ->latest('created_at');
 
         return $paginate ? $query->paginate($pageSize) : $query->get();
     }

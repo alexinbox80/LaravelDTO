@@ -26,7 +26,7 @@ class BlogPostService
         else
             $blogPosts = $this->blogPostRepository->getPaginated(config('pagination.index.blogPosts'));
 
-        return $blogPosts;
+        return ['data' => $blogPosts];
     }
 
     public function store(BlogPostDto $blogPostDto): BlogPostModel
