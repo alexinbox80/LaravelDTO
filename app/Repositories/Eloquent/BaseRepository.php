@@ -86,6 +86,11 @@ abstract class BaseRepository implements EloquentRepositoryContract
 
     /**
      * Count records by condition.
+     *
+     * @param array $conditions
+     * @return int
+     * @throws BindingResolutionException
+     * @throws RepositoryException
      */
     public function countBy(array $conditions): int
     {
@@ -96,6 +101,7 @@ abstract class BaseRepository implements EloquentRepositoryContract
      * Find a model by its primary key.
      *
      * @param int $id Id of the searched entity
+     * @return Model|null
      */
     public function find(int $id): ?Model
     {

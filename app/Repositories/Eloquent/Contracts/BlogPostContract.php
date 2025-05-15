@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Eloquent\Contracts;
 
-use App\Models\BlogPost;
+use App\Models\BlogPostModel;
 use Illuminate\Database\Eloquent\Collection;
 
 interface BlogPostContract
@@ -11,11 +11,11 @@ interface BlogPostContract
 
     public function getAll(): array;
 
-    public function getById(int $blogPostId): BlogPost;
+    public function find(int $blogPostId): ?BlogPostModel;
 
-    public function create(array $attributes): BlogPost;
+    public function create(array $attributes): BlogPostModel;
 
-    public function patch(int $blogPostId, array $blogPostDetails): BlogPost;
+    public function patch(int $blogPostId, array $blogPostDetails): BlogPostModel;
 
     public function getIsPublished(): Collection;
 

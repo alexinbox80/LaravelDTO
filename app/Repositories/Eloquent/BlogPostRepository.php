@@ -4,6 +4,7 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\BlogPost;
 use Illuminate\Database\Eloquent\Collection;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BlogPostRepository extends BaseRepository
 {
@@ -26,9 +27,9 @@ class BlogPostRepository extends BaseRepository
         ];
     }
 
-    public function getById(int $blogPostId): BlogPost
+    public function find(int $id): ?BlogPost
     {
-        return BlogPost::findOrFail($blogPostId);
+        return parent::find($id);
     }
 
     public function create(array $attributes): BlogPost
@@ -38,8 +39,12 @@ class BlogPostRepository extends BaseRepository
 
     public function patch(int $blogPostId, array $blogPostDetails): BlogPost
     {
-        $blogPost = $this->getById($blogPostId);
-        $this->update($blogPost, $blogPostDetails);
+        $blogPost = $this->find($blogPostId);
+
+        if ($blogPost)
+            $this->update($blogPost, $blogPostDetails);
+        else
+            throw new NotFoundHttpException(sprintf('The class %s does not exist.', $blogPostId));
 
         return $blogPost;
     }

@@ -3,7 +3,7 @@
 namespace App\Services\Blog;
 
 use App\DTO\BlogPostDto;
-use App\Models\BlogPost;
+use App\Models\BlogPostModel;
 use Illuminate\Http\Request;
 use App\Repositories\Eloquent\Contracts\BlogPostContract;
 
@@ -29,7 +29,7 @@ class BlogPostService
         return $blogPosts;
     }
 
-    public function store(BlogPostDto $blogPostDto): BlogPost
+    public function store(BlogPostDto $blogPostDto): BlogPostModel
     {
         $blogPost = $this->blogPostRepository->create([
             'title' => $blogPostDto->title,
@@ -41,12 +41,12 @@ class BlogPostService
         return $blogPost;
     }
 
-    public function show(string $blogPostId): BlogPost
+    public function show(string $blogPostId): ?BlogPostModel
     {
-        return $this->blogPostRepository->getById((int)$blogPostId);
+        return $this->blogPostRepository->find((int)$blogPostId);
     }
 
-    public function update(string $blogPostId, BlogPostDto $blogPostDto): BlogPost
+    public function update(string $blogPostId, BlogPostDto $blogPostDto): BlogPostModel
     {
         $blogPost = $this->blogPostRepository->patch(
             (int) $blogPostId,

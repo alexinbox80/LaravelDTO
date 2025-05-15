@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\DTO\BlogPostDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\BlogPostRequest;
+use App\Http\Resources\Api\BlogPostModelResource;
 use App\Http\Resources\Api\BlogPostResource;
 use App\Services\Blog\BlogPostService;
 use App\Services\Contracts\ResponseContract;
@@ -43,7 +44,7 @@ class BlogPostController extends Controller
         );
 
         return $this->responseService->created([
-            BlogPostResource::make($post)
+            BlogPostModelResource::make($post)
         ]);
     }
 
@@ -54,9 +55,12 @@ class BlogPostController extends Controller
     {
         $post = $this->blogPostService->show($blogPostId);
 
-        return $this->responseService->success([
-            BlogPostResource::make($post)
-        ]);
+        if ($post !== null)
+            return $this->responseService->success([
+                BlogPostModelResource::make($post)
+            ]);
+        else
+            return $this->responseService->notFound();
     }
 
     /**
@@ -70,7 +74,7 @@ class BlogPostController extends Controller
         );
 
         return $this->responseService->success([
-            BlogPostResource::make($post)
+            BlogPostModelResource::make($post)
         ]);
     }
 

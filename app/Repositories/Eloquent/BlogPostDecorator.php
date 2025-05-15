@@ -3,6 +3,7 @@
 namespace App\Repositories\Eloquent;
 
 use App\Models\BlogPost;
+use App\Models\BlogPostModel;
 use App\Repositories\Eloquent\Contracts\BlogPostContract;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -24,19 +25,52 @@ class BlogPostDecorator implements BlogPostContract
         return $this->blogPostRepository->getAll();
     }
 
-    public function getById(int $blogPostId): BlogPost
+    public function find(int $blogPostId): ?BlogPostModel
     {
-        return $this->blogPostRepository->getById($blogPostId);
+        $blogPost = $this->blogPostRepository->find($blogPostId);
+
+        if ($blogPost !== null)
+            return new BlogPostModel(
+                $blogPost->id,
+                $blogPost->title,
+                $blogPost->description,
+                $blogPost->source,
+                $blogPost->isPublished,
+                $blogPost->created_at,
+                $blogPost->updated_at,
+            );
+        else
+            return null;
     }
 
-    public function create(array $attributes): BlogPost
+    public function create(array $attributes): BlogPostModel
     {
-        return $this->blogPostRepository->create($attributes);
+        $blogPost =  $this->blogPostRepository->create($attributes);
+
+        return new BlogPostModel(
+            $blogPost->id,
+            $blogPost->title,
+            $blogPost->description,
+            $blogPost->source,
+            $blogPost->isPublished,
+            $blogPost->created_at,
+            $blogPost->updated_at
+        );
     }
 
-    public function patch(int $blogPostId, array $blogPostDetails): BlogPost
+    public function patch(int $blogPostId, array $blogPostDetails): BlogPostModel
     {
-        return $this->blogPostRepository->patch($blogPostId, $blogPostDetails);
+        $blogPost = $this->blogPostRepository->patch($blogPostId, $blogPostDetails);
+
+        return new BlogPostModel(
+            $blogPost->id,
+            $blogPost->title,
+            $blogPost->description,
+            $blogPost->source,
+            $blogPost->isPublished,
+            $blogPost->created_at,
+            $blogPost->updated_at
+        );
     }
 
     public function getIsPublished(): Collection
