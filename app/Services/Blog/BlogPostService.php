@@ -4,13 +4,13 @@ namespace App\Services\Blog;
 
 use App\DTO\BlogPostDto;
 use App\Models\BlogPost;
-use App\Repositories\Eloquent\BlogPostRepository;
 use Illuminate\Http\Request;
+use App\Repositories\Eloquent\Contracts\BlogPostContract;
 
 class BlogPostService
 {
     public function __construct(
-        private readonly BlogPostRepository $blogPostRepository
+        private readonly BlogPostContract $blogPostRepository
     )
     {
     }
