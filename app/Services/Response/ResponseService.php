@@ -57,7 +57,8 @@ class ResponseService implements ResponseContract
     public static function sendJsonResponse(
         bool  $status,
         int   $code = Response::HTTP_OK,
-        array $errors = [], array $data = [],
+        array $errors = [],
+        array $data = [],
         array $additionalData = []
     ): JsonResponse
     {
