@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Repositories\Eloquent\Contracts\EloquentRepositoryContract;
 use Carbon\Carbon;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use App\Repositories\Eloquent\Contracts\EloquentRepositoryContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -33,6 +33,8 @@ abstract class BaseRepository implements EloquentRepositoryContract
 
     /**
      * BaseRepository constructor.
+     *
+     * @throws RepositoryException
      */
     public function __construct()
     {
@@ -56,8 +58,10 @@ abstract class BaseRepository implements EloquentRepositoryContract
 
     /**
      * Save a new model and return the instance.
+     *
+     * @param array $attributes
      */
-    public function create(array $attributes): Model
+    public function create(array $attributes)
     {
         return $this->model->create($attributes);
     }
@@ -159,7 +163,7 @@ abstract class BaseRepository implements EloquentRepositoryContract
      *
      * @throws RepositoryException Exception if no associated model found
      */
-    public function delete(int|Model $model)
+    public function delete(int|Model $model): ?bool
     {
         if (is_numeric($model)) {
             $model = $this->find($model);

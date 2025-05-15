@@ -15,9 +15,9 @@ interface EloquentRepositoryContract
 
     public function insert(array $rows): bool;
 
-    public function create(array $attributes): Model;
+    public function create(array $attributes);
 
-    public function delete(int|Model $model);
+    public function delete(int|Model $model): ?bool;
 
     public function destroy(array|Collection $ids): int;
 

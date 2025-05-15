@@ -33,7 +33,7 @@ class BlogPostRepository extends BaseRepository
 
     public function create(array $attributes): BlogPost
     {
-        return BlogPost::create($attributes);
+        return parent::create($attributes);
     }
 
     public function patch(int $blogPostId, array $blogPostDetails): BlogPost
