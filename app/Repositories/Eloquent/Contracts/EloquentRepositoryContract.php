@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent\Contracts;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Interface EloquentRepositoryContract.
@@ -31,7 +32,7 @@ interface EloquentRepositoryContract
 
     public function findOneBy(array $conditions, array $relations = []): ?Model;
 
-    public function findBy(array $conditions, array $relations = [], bool $paginate = true, int $pageSize = 10);
+    public function findBy(array $conditions, array $relations = [], bool $paginate = true, int $pageSize = 10): Collection|LengthAwarePaginator;
 
     public function findAll(): Collection;
 

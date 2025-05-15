@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use App\Exceptions\RepositoryException;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 abstract class BaseRepository implements EloquentRepositoryContract
 {
@@ -137,7 +138,7 @@ abstract class BaseRepository implements EloquentRepositoryContract
      *
      * @return ?Collection|?LengthAwarePaginator A collection or paginated result
      */
-    public function findBy(array $conditions, array $relations = [], bool $paginate = true, int $pageSize = 10)
+    public function findBy(array $conditions, array $relations = [], bool $paginate = true, int $pageSize = 10): Collection|LengthAwarePaginator
     {
         $query = $this
             ->query()
