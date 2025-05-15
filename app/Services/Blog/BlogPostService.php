@@ -4,7 +4,7 @@ namespace App\Services\Blog;
 
 use App\DTO\BlogPostDto;
 use App\Models\BlogPost;
-use App\Repository\Eloquent\BlogPostRepository;
+use App\Repositories\Eloquent\BlogPostRepository;
 use Illuminate\Http\Request;
 
 class BlogPostService
@@ -48,7 +48,7 @@ class BlogPostService
 
     public function update(string $blogPostId, BlogPostDto $blogPostDto): BlogPost
     {
-        $blogPost = $this->blogPostRepository->update(
+        $blogPost = $this->blogPostRepository->patch(
             (int) $blogPostId,
             [
                 'title' => $blogPostDto->title,
@@ -62,6 +62,6 @@ class BlogPostService
 
     public function destroy(string $blogPostId): int
     {
-        return $this->blogPostRepository->destroy((int) $blogPostId);
+        return $this->blogPostRepository->destroy([(int) $blogPostId]);
     }
 }

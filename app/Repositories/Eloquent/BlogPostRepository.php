@@ -1,12 +1,17 @@
 <?php
 
-namespace App\Repository\Eloquent;
+namespace App\Repositories\Eloquent;
 
 use App\Models\BlogPost;
 use Illuminate\Database\Eloquent\Collection;
 
 class BlogPostRepository extends BaseRepository
 {
+    protected function getModelName(): string
+    {
+        return BlogPost::class;
+    }
+
     public function getPaginated(int $perPage): array
     {
         return [
@@ -26,15 +31,17 @@ class BlogPostRepository extends BaseRepository
         return BlogPost::findOrFail($blogPostId);
     }
 
-    public function create(array $blogPostDetails): BlogPost
+    public function create(array $attributes): BlogPost
     {
-        return BlogPost::create($blogPostDetails);
+        return BlogPost::create($attributes);
     }
 
-    public function update(int $blogPostId, array $blogPostDetails): BlogPost
+    public function patch(int $blogPostId, array $blogPostDetails): BlogPost
     {
-        BlogPost::whereId($blogPostId)->update($blogPostDetails);
-        return $this->getById($blogPostId);
+        $blogPost = $this->getById($blogPostId);
+        $this->update($blogPost, $blogPostDetails);
+
+        return $blogPost;
     }
 
     public function getIsPublished(): Collection
@@ -42,8 +49,8 @@ class BlogPostRepository extends BaseRepository
         return BlogPost::where('is_published', true);
     }
 
-    public function destroy(int $blogPostId): int
+    public function destroy(array|Collection $ids): int
     {
-        return BlogPost::destroy($blogPostId);
+        return BlogPost::destroy($ids);
     }
 }
