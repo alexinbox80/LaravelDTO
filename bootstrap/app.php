@@ -9,11 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
-//        health: '/up',
-        health: '/status',
+        web: __DIR__ . '/../app/Presentation/Http/Routes/web.php',
+        api: __DIR__ . '/../app/Presentation/Http/Routes/api.php',
+        commands: __DIR__ . '/../app/Presentation/Console/Routes/console.php',
+        health: '/healthcheck',
     )
     ->withMiddleware(function (Middleware $middleware) {
         //
