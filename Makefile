@@ -31,3 +31,9 @@ update:
 test-php:
 	${DOCKER_COMPOSE} exec laravel.test composer fix
 	${DOCKER_COMPOSE} exec laravel.test composer test
+
+dinit:
+	vendor/bin/deptrac init
+
+danalyse:
+	vendor/bin/deptrac analyse --config-file=deptrac.yaml --fail-on-uncovered --report-uncovered
