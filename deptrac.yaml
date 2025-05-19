@@ -4,6 +4,11 @@ deptrac:
 
     layers:
         # Layer definition
+        - name: DTO
+          collectors:
+              - type: classLike
+                value: .*App\\Presentation\\Http\\DTO\\.*
+
         - name: Entity
           collectors:
               - type: classLike
@@ -19,6 +24,26 @@ deptrac:
               - type: classLike
                 value: .*App\\Domain\\ValueObject\\Enums\\.*
 
+        - name: Resources
+          collectors:
+              - type: classLike
+                value: .*App\\Presentation\\Http\\Resources\\.*
+
+        - name: Requests
+          collectors:
+              - type: classLike
+                value: .*App\\Presentation\\Http\\Requests\\.*
+
+        - name: Controllers
+          collectors:
+            - type: classLike
+              value: .*App\\Presentation\\Http\\Controllers\\.*
+
+        - name: Services
+          collectors:
+              - type: classLike
+                value: .*App\\Domain\\Services\\.*
+
         - name: InfrastructureRepository
           collectors:
               - type: classLike
@@ -29,37 +54,9 @@ deptrac:
               - type: classLike
                 value: .*App\\Domain\\Repository\\Eloquent\\Contracts\\.*
 
-#      - name: Domain
-#        collectors:
-#          - type: directory
-#            regex: app/Domain
-#
-#      - name: Application
-#        collectors:
-#          - type: directory
-#            regex: app/Application
-#
-#      - name: Infrastructure
-#        collectors:
-#          - type: directory
-#            regex: app/Infrastructure
-#
-      # Vendor
-#        - name: DomainVendor
-#          collectors:
-#              - type: classLike
-#                regex: ^(Brick\\Math|Brick\\Money|Doctrine\\Common\\Collections|Ramsey\\Uuid)\\.*
-
       # Allow domain to use selected vendor libs
         - name: AllowedVendors
           collectors:
-#              - type: bool
-#                must:
-#                    - type: classLike
-#                      value: Psr\\.*
-#                must_not:
-#                    - type: classLike
-#                      value: Psr\\.*\\Test\\.*
               - type: classLike
                 value: Illuminate\\.*
               - type: classLike
@@ -73,6 +70,19 @@ deptrac:
                 value: '/vendor\/(?!webmozart|doctrine|psr|symfony\/uid).*/'
 
     ruleset:
+        PaginateResources:
+            - AllowedVendors
+
+        Requests:
+            - AllowedVendors
+
+        Resources:
+            - AllowedVendors
+
+        DTO:
+            - Requests
+            - Enums
+
         Entity:
             - AllowedVendors
             - Enums
@@ -84,16 +94,20 @@ deptrac:
             - AllowedVendors
             - Models
 
-#      Domain:
-#          - DomainVendor
-#      Application:
-#          - Domain
-#          - DomainVendor
-#      Infrastructure:
-#          - Domain
-#          - Application
-#          - DomainVendor
-#          - Vendor
+        Controllers:
+            - AllowedVendors
+            - Services
+            - DTO
+            - Requests
+            - Resources
+
+        Services:
+            - AllowedVendors
+            - InfrastructureRepository
+            - DomainContract
+            - Resources
+            - Models
+            - DTO
 
         InfrastructureRepository:
             - AllowedVendors
