@@ -1,0 +1,124 @@
+deptrac:
+    paths:
+        - ./app
+    exclude_files:
+        - '#.*test.*#'
+    layers:
+        # Allow domain to use selected vendor libs
+        -
+            name: AllowedVendors
+            collectors:
+#                -
+#                    type: classLike
+#                    value: .*Illuminate\\Http\\Request.*
+                -
+                    type: bool
+                    must:
+#                        -
+#                            type: classLike
+#                            value: Psr\\.*
+
+#                        -
+#                            type: classLike
+#                            value: .*Illuminate\\Http\\Request.*
+#
+                    must_not:
+                        -
+                            type: classLike
+                            value: .*Illuminate\\Http\\Request.*
+
+#                        - type: classLike
+#                          value: Psr\\.*\\Test\\.*
+#                        - type: classLike
+#                          value: Doctrine\\ORM\\Mapping.*
+#                        - type: classLike
+#                          value: Doctrine\\Common\\Collections.*
+#                        - type: classLike
+#                          value: Symfony\\Component\\Uid\\Uuid.*
+
+        - name: OtherVendors
+          collectors:
+              - type: directory
+                value: '/vendor\/(?!webmozart|doctrine|psr|symfony\/uid).*/'
+
+        -
+            name: Controller
+            collectors:
+              -
+                  type: classLike
+                  value: .*App\\Presentation\\Http\\Controllers\\.*
+
+        -
+            name: DTO
+            collectors:
+                -
+                    type: classLike
+                    value: .*App\\Presentation\\Http\\DTO\\.*
+
+        -
+            name: Enum
+            collectors:
+                -
+                    type: classLike
+                    value: .*App\\Domain\\ValueObject\\Enums\\.*
+
+        -
+            name: Request
+            collectors:
+                -
+                    type: classLike
+                    value: .*App\\Presentation\\Http\\Requests\\Api\\.*
+
+        -
+            name: Resource
+            collectors:
+                -
+                    type: classLike
+                    value: .*App\\Presentation\\Http\\Resources\\Api\\.*
+
+#        -
+#          name: ExternalServiceRequest
+#          collectors:
+#              - type: directory
+#                value: .\\Illuminate\\Http\\Request\\.*
+#
+#        - name: Repository
+#          collectors:
+#              - type: classLike
+#                value: .*App\\Infrastructure\\Repositories\\Eloquent\\.*
+#
+        -
+            name: Service
+            collectors:
+                -
+                    type: classLike
+                    value: .*App\\Domain\\Services\\.*
+#
+#        - name: InfrastructureRepository
+#          collectors:
+#                - type: classLike
+#                  value: .*App\\Infrastructure\\Repository\\.*
+
+    ruleset:
+        Controller:
+            - AllowedVendors
+            - Service
+            - Resource
+            - DTO
+            - Enum
+            - Request
+
+        Resource:
+            - AllowedVendors
+
+        Request:
+          - AllowedVendors
+#
+#        Service:
+#            - Repository
+#            - AllowedVendors
+#
+#        Repository:
+#            ~
+#        AllowedVendors:
+#            - OtherVendors

@@ -1,76 +1,109 @@
 deptrac:
     paths:
         - ./app
-    exclude_files:
-        - '#.*test.*#'
+
     layers:
-        # Allow domain to use selected vendor libs
+        # Layer definition
+        - name: Entity
+          collectors:
+              - type: classLike
+                value: .*App\\Domain\\Entity\\.*
+
+        - name: Models
+          collectors:
+              - type: classLike
+                value: .*App\\Domain\\Models\\.*
+
+        - name: Enums
+          collectors:
+              - type: classLike
+                value: .*App\\Domain\\ValueObject\\Enums\\.*
+
+        - name: InfrastructureRepository
+          collectors:
+              - type: classLike
+                value: .*App\\Infrastructure\\Repositories\\.*
+
+        - name: DomainContract
+          collectors:
+              - type: classLike
+                value: .*App\\Domain\\Repository\\Eloquent\\Contracts\\.*
+
+#      - name: Domain
+#        collectors:
+#          - type: directory
+#            regex: app/Domain
+#
+#      - name: Application
+#        collectors:
+#          - type: directory
+#            regex: app/Application
+#
+#      - name: Infrastructure
+#        collectors:
+#          - type: directory
+#            regex: app/Infrastructure
+#
+      # Vendor
+#        - name: DomainVendor
+#          collectors:
+#              - type: classLike
+#                regex: ^(Brick\\Math|Brick\\Money|Doctrine\\Common\\Collections|Ramsey\\Uuid)\\.*
+
+      # Allow domain to use selected vendor libs
         - name: AllowedVendors
           collectors:
-              - type: bool
-                must:
-                    - type: classLike
-                      value: Psr\\.*
-                    - type: classLike
-                      value: Illuminate\\.*
-                must_not:
-                    - type: classLike
-                      value: Psr\\.*\\Test\\.*
-                    - type: classLike
-                      value: Doctrine\\ORM\\Mapping.*
-                    - type: classLike
-                      value: Doctrine\\Common\\Collections.*
-                    - type: classLike
-                      value: Symfony\\Component\\Uid\\Uuid.*
+#              - type: bool
+#                must:
+#                    - type: classLike
+#                      value: Psr\\.*
+#                must_not:
+#                    - type: classLike
+#                      value: Psr\\.*\\Test\\.*
+              - type: classLike
+                value: Illuminate\\.*
+              - type: classLike
+                value: Symfony\\.*
+              - type: classLike
+                value: Carbon\\.*
 
         - name: OtherVendors
           collectors:
               - type: directory
                 value: '/vendor\/(?!webmozart|doctrine|psr|symfony\/uid).*/'
 
-        - name: Controller
-          collectors:
-              - type: classLike
-                value: .*App\\Presentation\\Http\\Controllers\\.*
-
-        - name: Resource
-          collectors:
-              - type: classLike
-                value: .*App\\Presentation\\Http\\Resources\\Api\\.*
-
-        - name: ExternalServiceRequest
-          collectors:
-              - type: directory
-                value: .\\Illuminate\\Http\\Request\\.*
-
-        - name: Repository
-          collectors:
-              - type: classLike
-                value: .*App\\Infrastructure\\Repositories\\Eloquent\\.*
-
-        - name: Service
-          collectors:
-              - type: classLike
-                value: .*App\\Domain\\Services\\.*
-
-        - name: InfrastructureRepository
-          collectors:
-                - type: classLike
-                  value: .*App\\Infrastructure\\Repository\\.*
-
     ruleset:
-        Controller:
-            - Service
-            - Resource
-
-        Resource:
+        Entity:
             - AllowedVendors
+            - Enums
 
-        Service:
-            - Repository
+        Models:
+            - Enums
+
+        DomainContract:
             - AllowedVendors
+            - Models
 
-        Repository:
-            ~
-#        AllowedVendors:
-#            - OtherVendors
+#      Domain:
+#          - DomainVendor
+#      Application:
+#          - Domain
+#          - DomainVendor
+#      Infrastructure:
+#          - Domain
+#          - Application
+#          - DomainVendor
+#          - Vendor
+
+        InfrastructureRepository:
+            - AllowedVendors
+            - DomainContract
+            - Entity
+            - Models
+            - Enums
+
+        AllowedVendors:
+            - OtherVendors
+
+        OtherVendors:
+            - AllowedVendors
