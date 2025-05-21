@@ -38,7 +38,7 @@ class BlogPostControllerTest extends TestCase
         );
     }
 
-    public function test_index(): void
+    public function testIndex(): void
     {
         $result[] = new BlogPostModel(
             1,
