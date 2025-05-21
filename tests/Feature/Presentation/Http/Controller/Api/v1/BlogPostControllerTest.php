@@ -9,6 +9,7 @@ use App\Presentation\Http\Controllers\Api\v1\BlogPostController;
 use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
 use Illuminate\Http\Request;
 use Mockery\MockInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class BlogPostControllerTest extends TestCase
@@ -58,6 +59,14 @@ class BlogPostControllerTest extends TestCase
             ''
         );
 
-        app(BlogPostController::class)->index($request);
+        $response = app(BlogPostController::class)->index($request);
+        $data = $response->getData()->data;
+
+        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
+        $this->assertEquals($data[0]->id, $result[0]->id);
+        $this->assertEquals($data[0]->title, $result[0]->title);
+        $this->assertEquals($data[0]->description, $result[0]->description);
+        $this->assertEquals($data[0]->created_at, $result[0]->created_at);
+        $this->assertEquals($data[0]->updated_at, $result[0]->updated_at);
     }
 }
