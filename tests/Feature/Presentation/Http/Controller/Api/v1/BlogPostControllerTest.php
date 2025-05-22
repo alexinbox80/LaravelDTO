@@ -63,10 +63,10 @@ class BlogPostControllerTest extends TestCase
         $data = $response->getData()->data;
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertEquals($data[0]->id, $result[0]->id);
-        $this->assertEquals($data[0]->title, $result[0]->title);
-        $this->assertEquals($data[0]->description, $result[0]->description);
-        $this->assertEquals($data[0]->created_at, $result[0]->created_at);
-        $this->assertEquals($data[0]->updated_at, $result[0]->updated_at);
+        $this->assertEquals($result[0]->id, $data[0]->id);
+        $this->assertEquals($result[0]->title, $data[0]->title);
+        $this->assertEquals($result[0]->description, $data[0]->description);
+        $this->assertEquals($result[0]->created_at, $data[0]->created_at);
+        $this->assertEquals($result[0]->updated_at, $data[0]->updated_at);
     }
 }
