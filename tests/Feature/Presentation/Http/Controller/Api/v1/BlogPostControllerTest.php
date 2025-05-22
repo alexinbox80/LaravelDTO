@@ -6,6 +6,7 @@ use App\Domain\Models\BlogPostModel;
 use App\Domain\Services\Blog\BlogPostService;
 use App\Domain\ValueObject\Enums\BlogPostSource;
 use App\Presentation\Http\Controllers\Api\v1\BlogPostController;
+use App\Presentation\Http\Requests\Api\BlogPostRequest;
 use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
 use Illuminate\Http\Request;
 use Mockery\MockInterface;
@@ -69,4 +70,52 @@ class BlogPostControllerTest extends TestCase
         $this->assertEquals($result[0]->created_at, $data[0]->created_at);
         $this->assertEquals($result[0]->updated_at, $data[0]->updated_at);
     }
+
+    public function testStore(): void
+    {
+        $data = [
+            'title' => 'test store title',
+            'description' => 'test store description',
+            'is-published' => true,
+        ];
+
+        $blogPostModel = new BlogPostModel(
+            2,
+            $data['title'],
+            $data['description'],
+            BlogPostSource::Api,
+            $data['is-published'],
+            now(),
+            now()
+        );
+
+        $this->mock(BlogPostService::class, function (MockInterface $mock) use ($blogPostModel) {
+            $mock->shouldReceive('store')->once()->andReturn($blogPostModel);
+        });
+
+        $url = 'api/v1/blog-post';
+        $method = 'POST';
+
+        $request = BlogPostRequest::create($url, $method, [
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'is-published' => $data['is-published']
+        ]);
+
+        dd($request->validated('title'));
+
+        $response = app(BlogPostController::class)->store($request);
+
+        dd($response);
+    }
+
+//    public function testShow(): void
+//    {
+//
+//    }
+//
+//    public function testUpdate(): void
+//    {
+//
+//    }
 }
