@@ -1,49 +1,63 @@
 services:
-    laravel.test:
+    laravel12_php-fpm:
+        image: php:8.4-fpm-alpine
         build:
-            context: './vendor/laravel/sail/runtimes/8.4'
-            dockerfile: Dockerfile
-            args:
-                WWWGROUP: '${WWWGROUP}'
-        image: 'sail-8.4/app'
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
+            dockerfile: docker/php-fpm/Dockerfile
+        container_name: 'laravel12_php'
         ports:
-            - '${APP_PORT:-80}:80'
-            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+            - '9000:9000'
         environment:
             WWWUSER: '${WWWUSER}'
-            LARAVEL_SAIL: 1
-            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
-            IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
-            - '.:/var/www/html'
+            - ./:/app
+        working_dir: /app
         networks:
-            - sail
-        depends_on:
-            - pgsql
-    pgsql:
-        image: 'postgres:17'
+            - net
+
+    laravel12_nginx:
+        image: nginx
+        container_name: 'laravel12_nginx'
+        working_dir: /app
         ports:
-            - '${FORWARD_DB_PORT:-5432}:5432'
+            - '8080:80'
+        volumes:
+            - ./:/app
+            - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - net
+
+    laravel12_postgres:
+        image: postgres:17
+        ports:
+            - 5432:5432
+        container_name: 'laravel12_postgres'
+        working_dir: /app
+        restart: always
         environment:
             PGPASSWORD: '${DB_PASSWORD:-secret}'
             POSTGRES_DB: '${DB_DATABASE}'
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
         volumes:
-            - 'sail-pgsql:/var/lib/postgresql/data'
-            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+            - dump:/app/dump
+            - postgresql:/var/lib/postgresql/data
         networks:
-            - sail
-        healthcheck:
-            test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
-            retries: 3
-            timeout: 5s
+            - net
+
+    laravel12_redis:
+        container_name: 'laravel12_redis'
+        image: redis:alpine
+        ports:
+            - 6379:6379
+        networks:
+            - net
+
+#Docker Networks
 networks:
-    sail:
+    net:
         driver: bridge
+
+#Docker Volumes
 volumes:
-    sail-pgsql:
-        driver: local
+    dump:
+    postgresql:

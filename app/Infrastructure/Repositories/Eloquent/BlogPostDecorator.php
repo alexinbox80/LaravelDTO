@@ -6,6 +6,7 @@ use App\Domain\Models\BlogPostModel;
 use App\Domain\Repository\Eloquent\Contracts\BlogPostContract;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 class BlogPostDecorator implements BlogPostContract
 {
@@ -21,6 +22,17 @@ class BlogPostDecorator implements BlogPostContract
      */
     public function getPaginated(int $perPage): LengthAwarePaginator
     {
+        Cache::set('bar', 'baz', 600);
+
+        Cache::store('redis')->put('bar1', 'baz1', 600); // 10 Minutes
+
+        Cache::tags(['products'])->put('product_' . 1, 123, 600);
+
+        if (Cache::has('bar12')) {
+           $cache = Cache::get('bar1');
+            dump($cache);
+        }
+
         return $this->blogPostRepository->getPaginated($perPage);
     }
 
