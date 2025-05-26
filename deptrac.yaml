@@ -1,76 +1,123 @@
 deptrac:
     paths:
         - ./app
-    exclude_files:
-        - '#.*test.*#'
+
     layers:
-        # Allow domain to use selected vendor libs
-        - name: AllowedVendors
-          collectors:
-              - type: bool
-                must:
-                    - type: classLike
-                      value: Psr\\.*
-                    - type: classLike
-                      value: Illuminate\\.*
-                must_not:
-                    - type: classLike
-                      value: Psr\\.*\\Test\\.*
-                    - type: classLike
-                      value: Doctrine\\ORM\\Mapping.*
-                    - type: classLike
-                      value: Doctrine\\Common\\Collections.*
-                    - type: classLike
-                      value: Symfony\\Component\\Uid\\Uuid.*
-
-        - name: OtherVendors
-          collectors:
-              - type: directory
-                value: '/vendor\/(?!webmozart|doctrine|psr|symfony\/uid).*/'
-
-        - name: Controller
+        # Layer definition
+        - name: DTO
           collectors:
               - type: classLike
-                value: .*App\\Presentation\\Http\\Controllers\\.*
+                value: .*App\\Presentation\\Http\\DTO\\.*
 
-        - name: Resource
+        - name: Entity
           collectors:
               - type: classLike
-                value: .*App\\Presentation\\Http\\Resources\\Api\\.*
+                value: .*App\\Domain\\Entity\\.*
 
-        - name: ExternalServiceRequest
-          collectors:
-              - type: directory
-                value: .\\Illuminate\\Http\\Request\\.*
-
-        - name: Repository
+        - name: Models
           collectors:
               - type: classLike
-                value: .*App\\Infrastructure\\Repositories\\Eloquent\\.*
+                value: .*App\\Domain\\Models\\.*
 
-        - name: Service
+        - name: Enums
+          collectors:
+              - type: classLike
+                value: .*App\\Domain\\ValueObject\\Enums\\.*
+
+        - name: Resources
+          collectors:
+              - type: classLike
+                value: .*App\\Presentation\\Http\\Resources\\.*
+
+        - name: Requests
+          collectors:
+              - type: classLike
+                value: .*App\\Presentation\\Http\\Requests\\.*
+
+        - name: Controllers
+          collectors:
+            - type: classLike
+              value: .*App\\Presentation\\Http\\Controllers\\.*
+
+        - name: Services
           collectors:
               - type: classLike
                 value: .*App\\Domain\\Services\\.*
 
         - name: InfrastructureRepository
           collectors:
-                - type: classLike
-                  value: .*App\\Infrastructure\\Repository\\.*
+              - type: classLike
+                value: .*App\\Infrastructure\\Repositories\\.*
+
+        - name: DomainContract
+          collectors:
+              - type: classLike
+                value: .*App\\Domain\\Repository\\Eloquent\\Contracts\\.*
+
+      # Allow domain to use selected vendor libs
+        - name: AllowedVendors
+          collectors:
+              - type: classLike
+                value: Illuminate\\.*
+              - type: classLike
+                value: Symfony\\.*
+              - type: classLike
+                value: Carbon\\.*
+
+        - name: OtherVendors
+          collectors:
+              - type: directory
+                value: '/vendor\/(?!webmozart|doctrine|psr|symfony\/uid).*/'
 
     ruleset:
-        Controller:
-            - Service
-            - Resource
-
-        Resource:
+        PaginateResources:
             - AllowedVendors
 
-        Service:
-            - Repository
+        Requests:
             - AllowedVendors
 
-        Repository:
-            ~
-#        AllowedVendors:
-#            - OtherVendors
+        Resources:
+            - AllowedVendors
+
+        DTO:
+            - Requests
+            - Enums
+
+        Entity:
+            - AllowedVendors
+            - Enums
+
+        Models:
+            - Enums
+
+        DomainContract:
+            - AllowedVendors
+            - Models
+
+        Controllers:
+            - AllowedVendors
+            - Services
+            - DTO
+            - Requests
+            - Resources
+
+        Services:
+            - AllowedVendors
+            - InfrastructureRepository
+            - DomainContract
+            - Resources
+            - Models
+            - DTO
+
+        InfrastructureRepository:
+            - AllowedVendors
+            - DomainContract
+            - Entity
+            - Models
+            - Enums
+
+        AllowedVendors:
+            - OtherVendors
+
+        OtherVendors:
+            - AllowedVendors

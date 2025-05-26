@@ -37,3 +37,6 @@ dinit:
 
 danalyse:
 	vendor/bin/deptrac analyse --config-file=deptrac.yaml --fail-on-uncovered --report-uncovered
+
+test:
+	vendor/bin/sail artisan test
