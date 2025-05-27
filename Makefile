@@ -40,3 +40,6 @@ danalyse:
 
 test:
 	vendor/bin/sail artisan test
+
+phpsh:
+	${DOCKER_COMPOSE} exec -it -u www-data laravel12_php-fpm bash
