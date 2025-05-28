@@ -165,6 +165,24 @@ abstract class BaseRepository implements EloquentRepositoryContract
     }
 
     /**
+     * @param int $page
+     * @param int $perPage
+     * @param array $conditions
+     * @return array
+     */
+    public function ownPaginated(int $page = 1, int $perPage = 10, array $conditions = []): array
+    {
+            return $this
+                ->query()
+                ->where($conditions)
+                ->skip(($page - 1) * $perPage)
+                ->take($perPage)
+                ->latest('created_at')
+                ->get()
+                ->toArray();
+    }
+
+    /**
      * Delete a database entity.
      *
      * @param int|Model $model An entity object or its id

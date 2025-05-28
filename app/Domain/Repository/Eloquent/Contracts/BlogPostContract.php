@@ -4,11 +4,10 @@ namespace App\Domain\Repository\Eloquent\Contracts;
 
 use App\Domain\Models\BlogPostModel;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 interface BlogPostContract
 {
-    public function getPaginated(int $perPage): LengthAwarePaginator;
+    public function getPaginated(int $page): array;
 
     public function getAll(): array;
 

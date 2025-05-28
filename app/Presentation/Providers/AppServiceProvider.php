@@ -6,6 +6,8 @@ use App\Domain\Repository\Eloquent\Contracts\BlogPostContract;
 use App\Domain\Services\Contracts\ResponseContract;
 use App\Domain\Services\Response\ResponseService;
 use App\Infrastructure\Repositories\Eloquent\BlogPostDecorator;
+use App\Infrastructure\Repositories\Redis\RedisRepository;
+use App\Infrastructure\Repositories\Redis\Contracts\RedisRepositoryContract;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -16,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(ResponseContract::class, ResponseService::class);
+        $this->app->bind(RedisRepositoryContract::class, RedisRepository::class);
         $this->app->bind(BlogPostContract::class, BlogPostDecorator::class);
     }
 

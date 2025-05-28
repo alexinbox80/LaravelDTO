@@ -4,36 +4,60 @@ namespace App\Infrastructure\Repositories\Eloquent;
 
 use App\Domain\Models\BlogPostModel;
 use App\Domain\Repository\Eloquent\Contracts\BlogPostContract;
+use App\Domain\ValueObject\Enums\BlogPostSource;
+use App\Infrastructure\Repositories\Redis\Contracts\RedisRepositoryContract;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 
 class BlogPostDecorator implements BlogPostContract
 {
+    public const CACHE_TAG = 'blogPosts';
+
     public function __construct(
-        private readonly BlogPostRepository $blogPostRepository
+        private readonly BlogPostRepository $blogPostRepository,
+        private readonly RedisRepositoryContract $redis
     )
     {
     }
 
+//    /**
+//     * @param int $perPage
+//     * @return LengthAwarePaginator
+//     */
+//    public function getPaginated(int $perPage): LengthAwarePaginator
+//    {
+//        return $this->blogPostRepository->getPaginated($perPage);
+//    }
+
     /**
-     * @param int $perPage
-     * @return LengthAwarePaginator
+     * @param int $page
+     * @return BlogPostModel[]
      */
-    public function getPaginated(int $perPage): LengthAwarePaginator
+    public function getPaginated(int $page): array
     {
-        Cache::set('bar', 'baz', 600);
+        $perPage = config('pagination.index.blogPosts');
 
-        Cache::store('redis')->put('bar1', 'baz1', 600); // 10 Minutes
+        return Cache::get(
+            $this->redis->getCacheKey( self::CACHE_TAG, $page, $perPage),
+            function () use ($page, $perPage) {
+                $blogPosts = $this->blogPostRepository->getOwnPaginated($page, $perPage);
+                $blogPostModels = array_map(
+                    static fn (array $blogPost): BlogPostModel => new BlogPostModel(
+                        $blogPost['id'],
+                        $blogPost['title'],
+                        $blogPost['description'],
+                        $blogPost['source'] === 'api' ? BlogPostSource::Api : BlogPostSource::App,
+                        $blogPost['isPublished'],
+                        $blogPost['created_at'],
+                        $blogPost['updated_at']
+                    ),
+                    $blogPosts
+                );
+                Cache::tags([self::CACHE_TAG])->put($this->redis->getCacheKey(self::CACHE_TAG, $page, $perPage), $blogPostModels);
 
-        Cache::tags(['products'])->put('product_' . 1, 123, 600);
-
-        if (Cache::has('bar12')) {
-           $cache = Cache::get('bar1');
-            dump($cache);
-        }
-
-        return $this->blogPostRepository->getPaginated($perPage);
+                return $blogPostModels;
+            }
+        );
     }
 
     /**
@@ -81,6 +105,8 @@ class BlogPostDecorator implements BlogPostContract
     {
         $blogPost =  $this->blogPostRepository->create($attributes);
 
+        Cache::tags([self::CACHE_TAG])->flush();
+
         return new BlogPostModel(
             $blogPost->id,
             $blogPost->title,
@@ -95,6 +121,8 @@ class BlogPostDecorator implements BlogPostContract
     public function patch(int $blogPostId, array $blogPostDetails): BlogPostModel
     {
         $blogPost = $this->blogPostRepository->patch($blogPostId, $blogPostDetails);
+
+        Cache::tags([self::CACHE_TAG])->flush();
 
         return new BlogPostModel(
             $blogPost->id,
@@ -114,6 +142,11 @@ class BlogPostDecorator implements BlogPostContract
 
     public function destroy(array|Collection $ids): int
     {
-        return $this->blogPostRepository->destroy($ids);
+        $item = $this->blogPostRepository->destroy($ids);
+
+        if ($item)
+            Cache::tags([self::CACHE_TAG])->flush();
+
+        return $item;
     }
 }

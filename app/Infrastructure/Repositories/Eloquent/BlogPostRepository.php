@@ -19,6 +19,21 @@ class BlogPostRepository extends BaseRepository
         return $this->findBy(['isPublished' => true], [], true , $perPage);
     }
 
+    public function getOwnPaginated(int $page, int $perPage): array
+    {
+        $data = $this->ownPaginated($page, $perPage, ['isPublished' => true]);
+
+        //dd($data);
+
+// You should manually make a slice of array for current page
+//        $items = array_slice($data, ($currentPage - 1) * $itemsPerPage, $itemsPerPage);
+//
+//        $pagination = new LengthAwarePaginator($items, count($data), $itemsPerPage, $currentPage);
+
+        return $data;
+    }
+
+
     public function getAll(): Collection
     {
         return $this->findBy(['isPublished' => true], [], false , 0);

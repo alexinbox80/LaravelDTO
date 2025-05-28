@@ -24,7 +24,7 @@ class BlogPostService
         if (is_null($request->query('page')))
             $blogPosts = $this->blogPostRepository->getAll();
         else
-            $blogPosts = $this->blogPostRepository->getPaginated(config('pagination.index.blogPosts'));
+            $blogPosts = $this->blogPostRepository->getPaginated($request->query('page') < 1 ? 1 : $request->query('page'));
 
         return ['data' => $blogPosts];
     }

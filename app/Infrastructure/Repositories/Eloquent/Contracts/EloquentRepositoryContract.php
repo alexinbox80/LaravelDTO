@@ -26,6 +26,8 @@ interface EloquentRepositoryContract
 
     public function updateOrCreate(array $data, array $conditions);
 
+    public function ownPaginated(int $page = 1, int $perPage = 10, array $conditions = []): array;
+
     public function find(int $id): ?Model;
 
     public function findWithRelations(int $id, array $relations): ?Model;
