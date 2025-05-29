@@ -4,7 +4,7 @@ namespace App\Domain\Services\Blog;
 
 use App\Domain\Models\BlogPostModel;
 use App\Domain\Repository\Eloquent\Contracts\BlogPostContract;
-use App\Infrastructure\Repositories\Elasticsearch\BlogPostRepository;
+use App\Infrastructure\Repositories\Elasticsearch\BlogPostDecorator as BlogPostRepository;
 use App\Presentation\Http\DTO\BlogPostDto;
 use Illuminate\Http\Request;
 
@@ -27,8 +27,7 @@ class BlogPostService
 
         $blogPosts = $this
             ->blogPostElasticsearchRepository
-            ->search($request->query->get('query'))
-            ->get();
+            ->search($request->query->get('query'));
 
         return ['data' => $blogPosts];
     }

@@ -10,8 +10,8 @@ use App\Infrastructure\Repositories\Eloquent\BlogPostDecorator;
 use App\Infrastructure\Repositories\Redis\RedisRepository;
 use App\Infrastructure\Repositories\Redis\Contracts\RedisRepositoryContract;
 use Illuminate\Support\ServiceProvider;
-use Elastic\Elasticsearch\Client;
-use Elastic\Elasticsearch\ClientBuilder;
+use Elasticsearch\Client;
+use Elasticsearch\ClientBuilder;
 
 class AppServiceProvider extends ServiceProvider
 {

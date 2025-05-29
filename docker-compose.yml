@@ -53,17 +53,36 @@ services:
             - net
 
     laravel12_elasticsearch:
+        image: elastic/elasticsearch:7.9.2
         container_name: 'laravel12_elasticsearch'
-        image: elasticsearch:9.0.1
-        ports:
-            - '9200:9200'
-            - '9300:9300'
         environment:
             - discovery.type=single-node
             - xpack.security.enabled=false
-            - ES_JAVA_OPTS=-Xms512m -Xmx512m
+            - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        ports:
+            - '9200:9200'
+            - '9300:9300'
         volumes:
             - elasticsearch:/usr/share/elasticsearch/data
+        networks:
+            - net
+
+    laravel12_kibana:
+        image: elastic/kibana:7.9.2
+        container_name: 'laravel12_kibana'
+        depends_on:
+            - laravel12_elasticsearch
+        environment:
+            SERVER_NAME: laravel12_kibana
+            ELASTICSEARCH_HOSTS: http://laravel12_elasticsearch:9200
+        links:
+            - laravel12_elasticsearch
+        ports:
+            - '5601:5601'
         networks:
             - net
 

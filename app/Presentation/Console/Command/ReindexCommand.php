@@ -3,7 +3,7 @@
 namespace App\Presentation\Console\Command;
 
 use App\Domain\Entity\BlogPost;
-use Elastic\Elasticsearch\Client;
+use Elasticsearch\Client;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 

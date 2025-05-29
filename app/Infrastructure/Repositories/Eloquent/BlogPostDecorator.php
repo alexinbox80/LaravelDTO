@@ -20,6 +20,10 @@ class BlogPostDecorator implements BlogPostContract
     {
     }
 
+    /**
+     * @param string $query
+     * @return BlogPostModel[]
+     */
     public function search(string $query = ''): array
     {
         $blogPosts = $this->blogPostRepository->search($query);

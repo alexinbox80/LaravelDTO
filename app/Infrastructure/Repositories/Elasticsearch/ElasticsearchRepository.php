@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Repositories\Elasticsearch;
 
-use Elastic\Elasticsearch\Client;
+use Elasticsearch\Client;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
@@ -39,7 +39,7 @@ abstract class ElasticsearchRepository extends Repository
                     ],
                 ]
             ],
-        ])->asArray();
+        ]);//->asArray();
 
         return $items;
     }
