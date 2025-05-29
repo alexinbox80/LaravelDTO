@@ -18,7 +18,7 @@ class BlogPostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->title(),
+            'title' => fake()->words(rand(2, 3), true),
             'description' => fake()->text(rand(200, 300)),
             'source' => (bool)rand(0, 1) ? BlogPostSource::App : BlogPostSource::Api,
             'isPublished' => (bool)rand(0, 1) ? true : false,

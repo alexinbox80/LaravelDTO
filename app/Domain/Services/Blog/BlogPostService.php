@@ -19,6 +19,17 @@ class BlogPostService
      * @param Request $request
      * @return array
      */
+    public function search(Request $request): array
+    {
+        $blogPosts = $this->blogPostRepository->search($request->query->get('query'));
+
+        return ['data' => $blogPosts];
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function index(Request $request): array
     {
         if (is_null($request->query('page')))

@@ -99,6 +99,21 @@ abstract class BaseRepository implements EloquentRepositoryContract
     }
 
     /**
+     * @param string $query
+     * @return Collection
+     * @throws BindingResolutionException
+     * @throws RepositoryException
+     */
+
+    public function entitySearch(string $query = ''): Collection
+    {
+        return $this->query()
+            ->where('title', 'like', "%{$query}%")
+            ->orWhere('description', 'like', "%{$query}%")
+            ->get();
+    }
+
+    /**
      * Find a model by its primary key.
      *
      * @param int $id id of the searched entity

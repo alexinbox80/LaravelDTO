@@ -20,6 +20,26 @@ class BlogPostDecorator implements BlogPostContract
     {
     }
 
+    public function search(string $query = ''): array
+    {
+        $blogPosts = $this->blogPostRepository->search($query);
+
+        $result = [];
+        foreach ($blogPosts as $blogPost) {
+            $result[] = new BlogPostModel(
+                $blogPost->id,
+                $blogPost->title,
+                $blogPost->description,
+                $blogPost->source,
+                $blogPost->isPublished,
+                $blogPost->created_at,
+                $blogPost->updated_at
+            );
+        }
+
+        return $result;
+    }
+
 //    /**
 //     * @param int $perPage
 //     * @return LengthAwarePaginator

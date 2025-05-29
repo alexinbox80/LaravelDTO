@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class BlogPost extends Model
 {
+    /** @use HasFactory<\Database\Factories\Domain\Entity\BlogPostFactory> */
     use HasFactory, Notifiable;
 
     private int $id;

@@ -23,6 +23,18 @@ class BlogPostController extends Controller
     }
 
     /**
+     * Display a searching of the resource.
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $blogPosts = $this->blogPostService->search($request);
+
+        return $this->responseService->success([
+            BlogPostResource::collection($blogPosts['data'])
+        ]);
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index(Request $request): JsonResponse

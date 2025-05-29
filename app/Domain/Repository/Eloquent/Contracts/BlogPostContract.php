@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface BlogPostContract
 {
+    public function search(string $query = ''): array;
+
     public function getPaginated(int $page): array;
 
     public function getAll(): array;

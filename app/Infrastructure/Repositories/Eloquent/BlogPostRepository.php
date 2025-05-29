@@ -9,6 +9,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BlogPostRepository extends BaseRepository
 {
+    public function search(string $query = ''): Collection
+    {
+        return $this->entitySearch($query);
+    }
+
     protected function getModelName(): string
     {
         return BlogPost::class;
@@ -23,12 +28,10 @@ class BlogPostRepository extends BaseRepository
     {
         $data = $this->ownPaginated($page, $perPage, ['isPublished' => true]);
 
-        //dd($data);
-
 // You should manually make a slice of array for current page
-//        $items = array_slice($data, ($currentPage - 1) * $itemsPerPage, $itemsPerPage);
+//        $items = array_slice($data, ($page - 1) * $perPerPage, $perPage);
 //
-//        $pagination = new LengthAwarePaginator($items, count($data), $itemsPerPage, $currentPage);
+//        $pagination = new LengthAwarePaginator($items, count($data), $perPage, $page);
 
         return $data;
     }

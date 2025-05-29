@@ -16,3 +16,7 @@ Route::group(['prefix' => 'v1'], function () {
         'destroy' => 'blog-posts.destroy',
     ]);
 });
+
+Route::group(['prefix' => 'v2'], function () {
+    Route::get('blog-post/search', [BlogPostController::class, 'search'])->name('blog-posts.search');
+});

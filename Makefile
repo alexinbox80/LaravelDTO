@@ -43,3 +43,8 @@ test:
 
 phpsh:
 	${DOCKER_COMPOSE} exec -it -u www-data laravel12_php-fpm bash
+
+cclear:
+	php artisan config:clear
+	php artisan cache:clear
+	php artisan config:cache

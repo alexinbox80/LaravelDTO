@@ -28,6 +28,8 @@ interface EloquentRepositoryContract
 
     public function ownPaginated(int $page = 1, int $perPage = 10, array $conditions = []): array;
 
+    public function entitySearch(string $query = ''): Collection;
+
     public function find(int $id): ?Model;
 
     public function findWithRelations(int $id, array $relations): ?Model;
