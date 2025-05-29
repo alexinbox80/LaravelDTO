@@ -4,13 +4,15 @@ namespace App\Domain\Services\Blog;
 
 use App\Domain\Models\BlogPostModel;
 use App\Domain\Repository\Eloquent\Contracts\BlogPostContract;
+use App\Infrastructure\Repositories\Elasticsearch\BlogPostRepository;
 use App\Presentation\Http\DTO\BlogPostDto;
 use Illuminate\Http\Request;
 
 class BlogPostService
 {
     public function __construct(
-        private readonly BlogPostContract $blogPostRepository
+        private readonly BlogPostContract $blogPostRepository,
+        private readonly BlogPostRepository $blogPostElasticsearchRepository
     )
     {
     }
@@ -21,7 +23,12 @@ class BlogPostService
      */
     public function search(Request $request): array
     {
-        $blogPosts = $this->blogPostRepository->search($request->query->get('query'));
+        //$blogPosts = $this->blogPostRepository->search($request->query->get('query'));
+
+        $blogPosts = $this
+            ->blogPostElasticsearchRepository
+            ->search($request->query->get('query'))
+            ->get();
 
         return ['data' => $blogPosts];
     }

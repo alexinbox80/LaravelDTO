@@ -29,7 +29,7 @@ services:
     laravel12_postgres:
         image: postgres:17
         ports:
-            - 5432:5432
+            - '5432:5432'
         container_name: 'laravel12_postgres'
         working_dir: /app
         restart: always
@@ -48,7 +48,22 @@ services:
         container_name: 'laravel12_redis'
         image: redis:alpine
         ports:
-            - 6379:6379
+            - '6379:6379'
+        networks:
+            - net
+
+    laravel12_elasticsearch:
+        container_name: 'laravel12_elasticsearch'
+        image: elasticsearch:9.0.1
+        ports:
+            - '9200:9200'
+            - '9300:9300'
+        environment:
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+            - ES_JAVA_OPTS=-Xms512m -Xmx512m
+        volumes:
+            - elasticsearch:/usr/share/elasticsearch/data
         networks:
             - net
 
@@ -61,3 +76,5 @@ networks:
 volumes:
     dump:
     postgresql:
+    elasticsearch:
+        driver: local

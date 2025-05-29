@@ -9,6 +9,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class BlogPostRepository extends BaseRepository
 {
+    /**
+     * @inheritDoc
+     */
+    protected function getModelClass(): string
+    {
+        return BlogPost::class;
+    }
+
     public function search(string $query = ''): Collection
     {
         return $this->entitySearch($query);
