@@ -3,12 +3,14 @@
 namespace App\Presentation\Providers;
 
 use App\Domain\Entity\BlogPost;
+use App\Domain\Observers\BlogPostCacheObserver;
 use App\Domain\Repository\Eloquent\Contracts\BlogPostContract;
+use App\Domain\Repository\Redis\RedisRepositoryContract;
 use App\Domain\Services\Contracts\ResponseContract;
 use App\Domain\Services\Response\ResponseService;
 use App\Infrastructure\Repositories\Eloquent\BlogPostDecorator;
 use App\Infrastructure\Repositories\Redis\RedisRepository;
-use App\Infrastructure\Repositories\Redis\Contracts\RedisRepositoryContract;
+
 use Illuminate\Support\ServiceProvider;
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        BlogPost::observe(BlogPostCacheObserver::class);
         $this->bootSearchable();
     }
 

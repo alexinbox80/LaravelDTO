@@ -4,15 +4,14 @@ namespace App\Infrastructure\Repositories\Eloquent;
 
 use App\Domain\Models\BlogPostModel;
 use App\Domain\Repository\Eloquent\Contracts\BlogPostContract;
+use App\Domain\Repository\Redis\RedisRepositoryContract;
 use App\Domain\ValueObject\Enums\BlogPostSource;
-use App\Infrastructure\Repositories\Redis\Contracts\RedisRepositoryContract;
+use App\Domain\ValueObject\Enums\CacheTags;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class BlogPostDecorator implements BlogPostContract
 {
-    public const CACHE_TAG = 'blogPosts';
-
     public function __construct(
         private readonly BlogPostRepository $blogPostRepository,
         private readonly RedisRepositoryContract $redis
@@ -62,7 +61,7 @@ class BlogPostDecorator implements BlogPostContract
         $perPage = config('pagination.index.blogPosts');
 
         return Cache::get(
-            $this->redis->getCacheKey( self::CACHE_TAG, $page, $perPage),
+            $this->redis->getCacheKey(CacheTags::BlogPosts->value, $page, $perPage),
             function () use ($page, $perPage) {
                 $blogPosts = $this->blogPostRepository->getOwnPaginated($page, $perPage);
                 $blogPostModels = array_map(
@@ -77,7 +76,7 @@ class BlogPostDecorator implements BlogPostContract
                     ),
                     $blogPosts
                 );
-                Cache::tags([self::CACHE_TAG])->put($this->redis->getCacheKey(self::CACHE_TAG, $page, $perPage), $blogPostModels);
+                Cache::tags([CacheTags::BlogPosts->value])->put($this->redis->getCacheKey(CacheTags::BlogPosts->value, $page, $perPage), $blogPostModels);
 
                 return $blogPostModels;
             }
@@ -129,8 +128,6 @@ class BlogPostDecorator implements BlogPostContract
     {
         $blogPost =  $this->blogPostRepository->create($attributes);
 
-        Cache::tags([self::CACHE_TAG])->flush();
-
         return new BlogPostModel(
             $blogPost->id,
             $blogPost->title,
@@ -145,8 +142,6 @@ class BlogPostDecorator implements BlogPostContract
     public function patch(int $blogPostId, array $blogPostDetails): BlogPostModel
     {
         $blogPost = $this->blogPostRepository->patch($blogPostId, $blogPostDetails);
-
-        Cache::tags([self::CACHE_TAG])->flush();
 
         return new BlogPostModel(
             $blogPost->id,
@@ -166,11 +161,6 @@ class BlogPostDecorator implements BlogPostContract
 
     public function destroy(array|Collection $ids): int
     {
-        $item = $this->blogPostRepository->destroy($ids);
-
-        if ($item)
-            Cache::tags([self::CACHE_TAG])->flush();
-
-        return $item;
+        return $this->blogPostRepository->destroy($ids);
     }
 }

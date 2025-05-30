@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Repositories\Redis\Contracts;
+namespace App\Domain\Repository\Redis;
 
 /**
  * Interface EloquentRepositoryContract.
@@ -8,4 +8,6 @@ namespace App\Infrastructure\Repositories\Redis\Contracts;
 interface RedisRepositoryContract
 {
     public function getCacheKey(string $tag, int $page, int $perPage): string;
+
+    public function cacheFlush(string $tag): void;
 }
