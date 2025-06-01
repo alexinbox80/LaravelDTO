@@ -8,7 +8,6 @@ use App\Domain\Repository\Redis\RedisRepositoryContract;
 use App\Domain\ValueObject\Enums\BlogPostSource;
 use App\Domain\ValueObject\Enums\CacheTags;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Cache;
 
 class BlogPostDecorator implements BlogPostContract
 {
@@ -57,28 +56,22 @@ class BlogPostDecorator implements BlogPostContract
     public function getPaginated(int $page): array
     {
         $perPage = config('pagination.index.blogPosts');
+        $blogPosts = $this->blogPostRepository->getOwnPaginated($page, $perPage);
 
-        return Cache::get(
-            $this->redis->getCacheKey(CacheTags::BlogPosts->value, $page, $perPage),
-            function () use ($page, $perPage) {
-                $blogPosts = $this->blogPostRepository->getOwnPaginated($page, $perPage);
-                $blogPostModels = array_map(
-                    static fn (array $blogPost): BlogPostModel => new BlogPostModel(
-                        $blogPost['id'],
-                        $blogPost['title'],
-                        $blogPost['description'],
-                        $blogPost['source'] === 'api' ? BlogPostSource::Api : BlogPostSource::App,
-                        $blogPost['isPublished'],
-                        $blogPost['created_at'],
-                        $blogPost['updated_at']
-                    ),
-                    $blogPosts
-                );
-                Cache::tags([CacheTags::BlogPosts->value])->put($this->redis->getCacheKey(CacheTags::BlogPosts->value, $page, $perPage), $blogPostModels);
-
-                return $blogPostModels;
-            }
+        $blogPostModels = array_map(
+            static fn (array $blogPost): BlogPostModel => new BlogPostModel(
+                $blogPost['id'],
+                $blogPost['title'],
+                $blogPost['description'],
+                $blogPost['source'] === 'api' ? BlogPostSource::Api : BlogPostSource::App,
+                $blogPost['isPublished'],
+                $blogPost['created_at'],
+                $blogPost['updated_at']
+            ),
+            $blogPosts
         );
+
+        return $this->redis->getCachePaginated($page, $perPage, CacheTags::BlogPosts->value, $blogPostModels);
     }
 
     /**

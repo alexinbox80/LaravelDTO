@@ -7,7 +7,7 @@ namespace App\Domain\Repository\Redis;
  */
 interface RedisRepositoryContract
 {
-    public function getCacheKey(string $tag, int $page, int $perPage): string;
+    public function getCachePaginated(int $page, int $perPage, string $tag, array $items): array;
 
     public function cacheFlush(string $tag): void;
 }
