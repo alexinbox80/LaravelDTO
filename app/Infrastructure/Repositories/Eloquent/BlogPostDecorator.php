@@ -27,20 +27,18 @@ class BlogPostDecorator implements BlogPostContract
     {
         $blogPosts = $this->blogPostRepository->search($query);
 
-        $result = [];
-        foreach ($blogPosts as $blogPost) {
-            $result[] = new BlogPostModel(
-                $blogPost->id,
-                $blogPost->title,
-                $blogPost->description,
-                $blogPost->source,
-                $blogPost->isPublished,
-                $blogPost->created_at,
-                $blogPost->updated_at
-            );
-        }
-
-        return $result;
+        return array_map(
+            static fn (array $blogPost): BlogPostModel => new BlogPostModel(
+                $blogPost['id'],
+                $blogPost['title'],
+                $blogPost['description'],
+                $blogPost['source'] === 'api' ? BlogPostSource::Api : BlogPostSource::App,
+                $blogPost['isPublished'],
+                $blogPost['created_at'],
+                $blogPost['updated_at']
+            ),
+            $blogPosts->toArray()
+        );
     }
 
 //    /**
@@ -90,20 +88,18 @@ class BlogPostDecorator implements BlogPostContract
     {
         $blogPosts = $this->blogPostRepository->getAll();
 
-        $result = [];
-        foreach ($blogPosts as $blogPost) {
-            $result[] = new BlogPostModel(
-                $blogPost->id,
-                $blogPost->title,
-                $blogPost->description,
-                $blogPost->source,
-                $blogPost->isPublished,
-                $blogPost->created_at,
-                $blogPost->updated_at
-            );
-        }
-
-        return $result;
+        return array_map(
+            static fn (array $blogPost): BlogPostModel => new BlogPostModel(
+                $blogPost['id'],
+                $blogPost['title'],
+                $blogPost['description'],
+                $blogPost['source'] === 'api' ? BlogPostSource::Api : BlogPostSource::App,
+                $blogPost['isPublished'],
+                $blogPost['created_at'],
+                $blogPost['updated_at']
+            ),
+            $blogPosts->toArray()
+        );
     }
 
     public function find(int $blogPostId): ?BlogPostModel
