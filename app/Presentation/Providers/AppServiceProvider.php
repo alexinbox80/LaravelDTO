@@ -6,6 +6,7 @@ use App\Domain\Entity\BlogPost;
 use App\Domain\Observers\BlogPostCacheObserver;
 use App\Domain\Repository\Eloquent\Contracts\BlogPostContract;
 use App\Domain\Repository\Redis\RedisRepositoryContract;
+use App\Domain\Services\Cache\CacheMonitoringService;
 use App\Domain\Services\Contracts\ResponseContract;
 use App\Domain\Services\Response\ResponseService;
 use App\Infrastructure\Repositories\Eloquent\BlogPostDecorator;
@@ -36,6 +37,10 @@ class AppServiceProvider extends ServiceProvider
     {
         BlogPost::observe(BlogPostCacheObserver::class);
         $this->bootSearchable();
+
+        if (config('cache.monitoring.enabled')) {
+            (new CacheMonitoringService)->subscribe($this->app['events']);
+        }
     }
 
     private function registerSearchClient(): void

@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Repositories\Redis;
 
-
 use App\Domain\Repository\Redis\RedisRepositoryContract;
 use Illuminate\Support\Facades\Cache;
 
@@ -15,7 +14,7 @@ class RedisRepository implements RedisRepositoryContract
 
     public function getCachePaginated(int $page, int $perPage, string $tag, array $items): array
     {
-        return Cache::get(
+        return Cache::tags([$tag])->get(
             $this->getCacheKey($tag, $page, $perPage),
             function () use ($page, $perPage, $tag, $items) {
                 Cache::tags([$tag])->put($this->getCacheKey($tag, $page, $perPage), $items);
