@@ -39,4 +39,14 @@ return [
         'enabled' => env('ELASTICSEARCH_ENABLED', false),
         'hosts' => explode(',', env('ELASTICSEARCH_HOSTS', 'elasticsearch:9200')),
     ],
+
+    'influxdb' => [
+        'client' => [
+            'url' => env('INFLUX_HOST', 'localhost') . ':' . env('INFLUX_PORT', '8086'),
+            'token' => env('INFLUX_TOKEN'),
+            'org' => env('INFLUX_ORG'),
+            'bucket' => env('INFLUX_BUCKET', 'default'),
+            'precision' => \InfluxDB2\Model\WritePrecision::S,
+        ],
+    ],
 ];
