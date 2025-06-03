@@ -9,9 +9,12 @@ TAB=echo "\t"
 
 help:
 	@$(call H1,Application)
-	$(TAB) make install - Собрать и запустить образы, composer install, создание тестовой БД
-	$(TAB) make update - Пересобрать и перезапустить образы, composer install
-	$(TAB) make test-php - Выполнить PHP проверки
+	@$(TAB) make install - Собрать и запустить образы, composer install, создание тестовой БД
+	@$(TAB) make update - Пересобрать и перезапустить образы, composer install
+	@$(TAB) make test-php - Выполнить PHP проверки
+	@$(TAB) make danalyse - Запустить deptrac анализатор
+	@$(TAB) make phpsh - Зайти в контейнер PHP
+	@$(TAB) make ccleare - Очистить кешь приложения
 
 install:
 	${DOCKER_COMPOSE} build
